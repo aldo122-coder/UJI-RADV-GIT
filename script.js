@@ -924,21 +924,15 @@ function startMeasurement() {
 // =====================================================
 
 measurementActive = true;
+
+measurementElapsedSeconds = 0;
+
 measurementStartTime = Date.now();
-    
+
 const measurementPanel =
     document.getElementById(
         "measurementPanel"
     );
-
-if (measurementPanel) {
-    measurementPanel.classList.add("active");
-}
-
-measurementElapsedSeconds = 0;
-
-measurementStartTime =
-    Date.now();
 
 switch2State =
     "MENGUKUR";
@@ -1264,11 +1258,6 @@ function updateMeasurementClock() {
         return;
     }
 
-    measurementClock =
-        setTimeout(
-            updateMeasurementClock,
-            1000
-        );
 }
     
 // =========================================================
