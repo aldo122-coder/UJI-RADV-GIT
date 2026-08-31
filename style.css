@@ -445,7 +445,7 @@ h1 {
     display: grid;
 
     grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+        repeat(2, minmax(0, 1fr));
 
     gap: 12px;
 
@@ -538,15 +538,6 @@ h1 {
 
 #measurementStatus {
     color: #f59e0b;
-}
-
-
-/* =========================================================
-   DATA
-========================================================= */
-
-#measurementProgress {
-    color: #22c55e;
 }
 
 
