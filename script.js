@@ -58,29 +58,26 @@ let switch1State = "STOP";
 let switch2State = "SELESAI";
 
 
-// Status pengukuran
+// =========================================================
+// STATUS PENGUKURAN
+// =========================================================
 
 let measurementActive = false;
 
-let measurementStartTime = 0;
-let measurementClock = null;
-
-// Waktu pengukuran berjalan
-
 let measurementElapsedSeconds = 0;
-
-
-// Timer pengukuran
-
-let measurementTimer = null;
-
-
-// TIMER PENGUKURAN RAD-V
-
-let measurementClockTimer = null;
 
 let measurementStartTime = null;
 
+// Timer utama pengukuran
+let measurementTimer = null;
+
+// Timer update tampilan jam
+let measurementClockTimer = null;
+
+// Timer update progress
+let measurementClock = null;
+
+// Total waktu pengukuran = 05 menit 30 detik
 const MEASUREMENT_TOTAL_SECONDS = 5 * 60 + 30;
 
 // =========================================================
