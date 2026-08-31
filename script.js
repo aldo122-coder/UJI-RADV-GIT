@@ -1335,18 +1335,36 @@ if (progressText) {
     // =====================================================
 
     const progressText =
-        document.getElementById(
-            "measurementProgressText"
+    document.getElementById(
+        "measurementProgressText"
+    );
+
+if (progressText) {
+
+    let displaySeconds =
+        Math.min(
+            finalElapsedSeconds,
+            MEASUREMENT_TOTAL_SECONDS
         );
 
+    if (reason === "TIMEOUT") {
 
-    if (progressText) {
-
-        progressText.textContent =
-            `DATA ${measurementMinute} / 10`;
+        displaySeconds =
+            MEASUREMENT_TOTAL_SECONDS;
     }
-}
 
+    const minutes =
+        Math.floor(
+            displaySeconds / 60
+        );
+
+    const seconds =
+        displaySeconds % 60;
+
+    progressText.textContent =
+        `${String(minutes).padStart(2, "0")}:` +
+        `${String(seconds).padStart(2, "0")} / 05:30`;
+}
 // =========================================================
 // UPDATE TAMPILAN PROGRESS PENGUKURAN
 // =========================================================
@@ -1511,80 +1529,116 @@ if (measurementPanel) {
 
 
     // =====================================================
-    // TIMER TERAKHIR
-    // =====================================================
+// TIMER TERAKHIR
+// =====================================================
 
-    const timerElement =
-        document.getElementById(
-            "measurementTimer"
-        );
-
-
-    if (timerElement) {
-
-        const safeElapsed =
-            Math.min(
-                finalElapsedSeconds,
-                MEASUREMENT_TOTAL_SECONDS
-            );
-
-
-        const minutes =
-            Math.floor(
-                safeElapsed / 60
-            );
-
-
-        const seconds =
-            safeElapsed % 60;
-
-
-        timerElement.textContent =
-            String(minutes).padStart(2, "0") +
-            ":" +
-            String(seconds).padStart(2, "0");
-    }
-
-
-    // =====================================================
-    // PROGRESS TERAKHIR
-    // =====================================================
-
-    const progressBar =
-        document.getElementById(
-            "measurementProgressBar"
-        );
-
-
-    if (progressBar) {
-
-        progressBar.style.width =
-            `${Math.min(
-                (measurementMinute / 10) * 100,
-                100
-            )}%`;
-    }
-
-
-    const progressText =
-        document.getElementById(
-            "measurementProgressText"
-        );
-
-
-    if (progressText) {
-
-        progressText.textContent =
-            `DATA ${measurementMinute} / 10`;
-    }
-
-
-    console.log(
-        "RAD-V: Pengukuran selesai:",
-        reason,
-        `${measurementMinute}/10`
+const timerElement =
+    document.getElementById(
+        "measurementTimer"
     );
+
+if (timerElement) {
+
+    let safeElapsed =
+        Math.min(
+            finalElapsedSeconds,
+            MEASUREMENT_TOTAL_SECONDS
+        );
+
+    // Jika timeout, pastikan menunjukkan 05:30
+    if (reason === "TIMEOUT") {
+
+        safeElapsed =
+            MEASUREMENT_TOTAL_SECONDS;
+    }
+
+    const minutes =
+        Math.floor(
+            safeElapsed / 60
+        );
+
+    const seconds =
+        safeElapsed % 60;
+
+    timerElement.textContent =
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0");
 }
+
+
+// =====================================================
+// PROGRESS TERAKHIR BERDASARKAN WAKTU
+// =====================================================
+
+const progressBar =
+    document.getElementById(
+        "measurementProgressBar"
+    );
+
+if (progressBar) {
+
+    let finalPercentage =
+        Math.min(
+            (
+                finalElapsedSeconds /
+                MEASUREMENT_TOTAL_SECONDS
+            ) * 100,
+            100
+        );
+
+    // Jika selesai karena waktu 05:30
+    if (reason === "TIMEOUT") {
+
+        finalPercentage = 100;
+    }
+
+    progressBar.style.width =
+        `${finalPercentage}%`;
+}
+
+
+// =====================================================
+// TEKS PROGRESS
+// =====================================================
+
+const progressText =
+    document.getElementById(
+        "measurementProgressText"
+    );
+
+if (progressText) {
+
+    let displaySeconds =
+        Math.min(
+            finalElapsedSeconds,
+            MEASUREMENT_TOTAL_SECONDS
+        );
+
+    if (reason === "TIMEOUT") {
+
+        displaySeconds =
+            MEASUREMENT_TOTAL_SECONDS;
+    }
+
+    const minutes =
+        Math.floor(
+            displaySeconds / 60
+        );
+
+    const seconds =
+        displaySeconds % 60;
+
+    progressText.textContent =
+        `${String(minutes).padStart(2, "0")}:` +
+        `${String(seconds).padStart(2, "0")} / 05:30`;
+}
+
+
+console.log(
+    "RAD-V: Pengukuran selesai:",
+    reason
+);
 
 
 // =========================================================
@@ -2174,126 +2228,6 @@ document.addEventListener(
         }
     }
 );
-
-// =========================================================
-// HITUNG JUMLAH DATA PADA TABEL
-// =========================================================
-
-function getRadiationTableDataCount() {
-
-    const tbody =
-        document.querySelector(
-            "#radiationTable tbody"
-        );
-
-    if (!tbody) {
-        return 0;
-    }
-
-    const rows =
-        tbody.querySelectorAll("tr");
-
-    let count = 0;
-
-    rows.forEach(row => {
-
-        // Abaikan baris kosong
-        if (
-            row.classList.contains("table-empty")
-        ) {
-            return;
-        }
-
-        const cells =
-            row.querySelectorAll("td");
-
-        if (cells.length === 0) {
-            return;
-        }
-
-        count++;
-    });
-
-    return count;
-}
-
-
-// =========================================================
-// MONITOR DATA BARU PADA TABEL
-// =========================================================
-
-function checkMeasurementTableProgress() {
-
-    if (!measurementActive) {
-        return;
-    }
-
-    const currentCount =
-        getRadiationTableDataCount();
-
-
-    const newDataCount =
-        currentCount -
-        measurementInitialTableCount;
-
-
-    const newProgress =
-        Math.max(
-            0,
-            Math.min(
-                newDataCount,
-                10
-            )
-        );
-
-
-    if (
-        newProgress !== measurementMinute
-    ) {
-
-        measurementMinute =
-            newProgress;
-
-
-        console.log(
-            "RAD-V TABLE PROGRESS:",
-            {
-                awal:
-                    measurementInitialTableCount,
-
-                sekarang:
-                    currentCount,
-
-                baru:
-                    newDataCount,
-
-                progress:
-                    `${measurementMinute}/10`
-            }
-        );
-
-
-        updateMeasurementDisplay();
-    }
-
-
-    // 10 DATA SUDAH MASUK
-    if (
-        measurementMinute >= 10
-    ) {
-
-        clearInterval(
-            measurementTableWatcher
-        );
-
-        measurementTableWatcher =
-            null;
-
-        finishMeasurement(
-            "COMPLETE"
-        );
-    }
-}
 
 
 // =========================================================
