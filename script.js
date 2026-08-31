@@ -59,21 +59,14 @@ let switch2State = "SELESAI";
 
 
 // Status pengukuran
+// =========================================================
+// STATUS PENGUKURAN
+// =========================================================
 
 let measurementActive = false;
 
-
-// Data keberapa
-// 0 = belum ada data
-
-let measurementMinute = 0;
-
-let measurementInitialTableCount = 0;
-let measurementTableWatcher = null;
-
-// Timer maksimal 10 menit
-
 let measurementTimer = null;
+
 
 // =========================================================
 // TIMER PENGUKURAN RAD-V
@@ -83,7 +76,7 @@ let measurementClockTimer = null;
 
 let measurementStartTime = null;
 
-const MEASUREMENT_TOTAL_SECONDS = 10 * 60;
+const MEASUREMENT_TOTAL_SECONDS = 5 * 60 + 30;
 
 // =========================================================
 // LOCK HALAMAN SAAT AWAL
@@ -928,12 +921,9 @@ function startMeasurement() {
     // RESET SESI
     // =====================================================
 
-    measurementActive = true;
+   measurementActive = true;
 
-    measurementInitialTableCount =
-    getRadiationTableDataCount();
-
-    const measurementPanel =
+const measurementPanel =
     document.getElementById(
         "measurementPanel"
     );
@@ -941,32 +931,21 @@ function startMeasurement() {
 if (measurementPanel) {
     measurementPanel.classList.add("active");
 }
-    
-    measurementMinute = 0;
 
-    measurementStartTime =
-        Date.now();
+measurementStartTime = Date.now();
 
-    switch2State =
-        "MENGUKUR";
+switch2State = "MENGUKUR";
 
 
     // =====================================================
     // RESET TIMER
     // =====================================================
 
-    clearTimeout(
-        measurementTimer
-    );
+    clearTimeout(measurementTimer);
+measurementTimer = null;
 
-    measurementTimer = null;
-
-
-    clearInterval(
-        measurementClockTimer
-    );
-
-    measurementClockTimer = null;
+clearInterval(measurementClockTimer);
+measurementClockTimer = null;
 
 
     // =====================================================
@@ -984,51 +963,26 @@ if (measurementPanel) {
     // TIMER JAM
     // =====================================================
 
-    measurementClockTimer =
-        setInterval(
-            function () {
-
-                updateMeasurementClock();
-
-            },
-            1000
-        );
-
-    // =====================================================
-// MONITOR JUMLAH DATA TABEL
-// =====================================================
-
-clearInterval(
-    measurementTableWatcher
-);
-
-measurementTableWatcher =
+   measurementClockTimer =
     setInterval(
         function () {
-
-            checkMeasurementTableProgress();
-
+            updateMeasurementClock();
         },
-        2000
+        1000
     );
 
-
+   
     // =====================================================
     // TIMER MAKSIMAL 10 MENIT
     // =====================================================
 
     measurementTimer =
-        setTimeout(
-            function () {
-
-                finishMeasurement(
-                    "TIMEOUT"
-                );
-
-            },
-            MEASUREMENT_TOTAL_SECONDS * 1000
-        );
-
+    setTimeout(
+        function () {
+            finishMeasurement("TIMEOUT");
+        },
+        MEASUREMENT_TOTAL_SECONDS * 1000
+    );
 
     // Update pertama
     updateMeasurementClock();
@@ -1045,109 +999,64 @@ measurementTableWatcher =
 // TERIMA DATA rc/data
 // =========================================================
 
-function handleMeasurementData(
-    message
-) {
+function handleMeasurementData(message) {
 
     console.log(
         "MQTT DATA:",
         message
     );
 
-
     let data;
 
-
     try {
-
-        data =
-            JSON.parse(message);
-
+        data = JSON.parse(message);
     } catch (error) {
-
         console.error(
             "JSON rc/data tidak valid:",
             error
         );
-
         return;
     }
 
-
-    // =====================================================
-    // HANYA TERIMA DATA SAAT MENGUKUR
-    // =====================================================
-
     if (!measurementActive) {
-
         console.log(
             "Data diterima tetapi tidak ada sesi pengukuran aktif."
         );
-
         return;
     }
 
-
-    // =====================================================
-    // UPDATE SENSOR
-    // =====================================================
-
-    updateSensorDisplay(
-        data
-    );
-
-
-    // =====================================================
-    // UPDATE PROGRESS
-    // =====================================================
-
-    updateMeasurementDisplay();
-
-
-    // =====================================================
-    // KETERANGAN DATA
-    // =====================================================
+    updateSensorDisplay(data);
 
     const dataInfo =
         document.getElementById(
             "measurementDataInfo"
         );
 
-
     if (dataInfo) {
-
         dataInfo.textContent =
-            `✓ Data pengukuran ${minute}/10 telah diterima` +
-            ` — CPM: ${Number(data.cpm || 0).toFixed(0)}` +
-            ` — μSv/h: ${Number(data.usv || 0).toFixed(2)}`;
+            `Data pengukuran diterima — CPM: ${
+                Number(data.cpm || 0).toFixed(0)
+            } — μSv/h: ${
+                Number(data.usv || 0).toFixed(2)
+            }`;
     }
 
+    setTimeout(() => {
 
-    const description =
-        document.getElementById(
-            "measurementDescription"
-        );
-
-
-    if (description) {
-
-        if (minute < 10) {
-
-            description.textContent =
-                `Data ke-${minute}/10 berhasil diambil. Menunggu pengukuran menit berikutnya...`;
-
-        } else {
-
-            description.textContent =
-                "Data ke-10/10 berhasil diambil. Pengukuran selesai.";
+        if (
+            typeof loadRadiationMap ===
+            "function"
+        ) {
+            loadRadiationMap();
         }
-    }
 
+    }, 3000);
 
     console.log(
-        `RAD-V: Data ${minute}/10 diterima`,
+        "RAD-V: Data pengukuran diterima",
         data
     );
+}
 
 
     // =====================================================
@@ -1334,9 +1243,9 @@ function updateMeasurementClock() {
 
         const percentage =
             Math.min(
-                (measurementMinute / 10) * 100,
-                100
-            );
+            (safeElapsed / MEASUREMENT_TOTAL_SECONDS) * 100,
+            100
+        );
 
         progressBar.style.width =
             `${percentage}%`;
@@ -1387,7 +1296,7 @@ function updateMeasurementClock() {
     if (progressText) {
 
         progressText.textContent =
-            `DATA ${measurementMinute} / 10`;
+    `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")} / 05:30`;
     }
 }
 
@@ -1402,197 +1311,49 @@ function updateMeasurementDisplay() {
             "measurementStatus"
         );
 
-
-    const progress =
-        document.getElementById(
-            "measurementProgress"
-        );
-
-
     const description =
         document.getElementById(
             "measurementDescription"
         );
-
 
     const dataInfo =
         document.getElementById(
             "measurementDataInfo"
         );
 
-
-    const progressBar =
-        document.getElementById(
-            "measurementProgressBar"
-        );
-
-
-    const progressText =
-        document.getElementById(
-            "measurementProgressText"
-        );
-
-
-    // =====================================================
-    // PERSENTASE DATA
-    // =====================================================
-
-    const percentage =
-        Math.min(
-            (measurementMinute / 10) * 100,
-            100
-        );
-
-
-    // =====================================================
-    // STATUS
-    // =====================================================
-
     if (status) {
-
         status.textContent =
             measurementActive
                 ? "MENGUKUR"
                 : "SELESAI";
     }
 
-
-    // =====================================================
-    // DATA
-    // =====================================================
-
-    if (progress) {
-
-        progress.textContent =
-            `${measurementMinute}/10`;
-    }
-
-
-    if (progressText) {
-
-        progressText.textContent =
-            `DATA ${measurementMinute} / 10`;
-    }
-
-
-    // =====================================================
-    // PROGRESS BAR
-    // =====================================================
-
-    if (progressBar) {
-
-        progressBar.style.width =
-            `${percentage}%`;
-    }
-
-
-    // =====================================================
-    // DESKRIPSI
-    // =====================================================
-
     if (measurementActive) {
 
-        if (measurementMinute === 0) {
+        if (description) {
+            description.textContent =
+                "Pengukuran sedang berlangsung selama 05:30.";
+        }
 
-            if (description) {
-
-                description.textContent =
-                    "Pengukuran dimulai. Menunggu data pertama...";
-            }
-
-            if (dataInfo) {
-
-                dataInfo.textContent =
-                    "Belum ada data. Menunggu data ke-1 dari ESP32.";
-            }
-
-        } else if (measurementMinute < 10) {
-
-            if (description) {
-
-                description.textContent =
-                    `Data ke-${measurementMinute}/10 berhasil diterima. ` +
-                    `Menunggu data berikutnya...`;
-            }
-
-            if (dataInfo) {
-
-                dataInfo.textContent =
-                    `✓ ${measurementMinute}/10 data telah diterima.`;
-            }
-
-        } else {
-
-            if (description) {
-
-                description.textContent =
-                    "✓ Semua 10 data pengukuran telah diterima.";
-            }
-
-            if (dataInfo) {
-
-                dataInfo.textContent =
-                    "✓ Pengukuran lengkap 10/10.";
-            }
+        if (dataInfo) {
+            dataInfo.textContent =
+                "Menunggu hasil pengukuran...";
         }
 
     } else {
 
-        // =================================================
-        // SELESAI
-        // =================================================
+        if (description) {
+            description.textContent =
+                "Aktifkan SENSOR untuk memulai pengukuran.";
+        }
 
-        if (measurementMinute >= 10) {
-
-            if (description) {
-
-                description.textContent =
-                    "✓ Pengukuran 10 menit telah selesai.";
-            }
-
-            if (dataInfo) {
-
-                dataInfo.textContent =
-                    "✓ Semua 10 data pengukuran berhasil diterima.";
-            }
-
-        } else if (measurementMinute > 0) {
-
-            if (description) {
-
-                description.textContent =
-                    "Pengukuran dihentikan sebelum 10 menit.";
-            }
-
-            if (dataInfo) {
-
-                dataInfo.textContent =
-                    `Pengukuran berhenti pada ${measurementMinute}/10.`;
-            }
-
-        } else {
-
-            if (description) {
-
-                description.textContent =
-                    "Aktifkan saklar SELESAI untuk memulai pengukuran.";
-            }
-
-            if (dataInfo) {
-
-                dataInfo.textContent =
-                    "Belum ada data pengukuran.";
-            }
+        if (dataInfo) {
+            dataInfo.textContent =
+                "Belum ada data pengukuran.";
         }
     }
 
-
-    // =====================================================
-    // UPDATE TIMER / DETAIL
-    // =====================================================
-
     if (measurementActive) {
-
         updateMeasurementClock();
     }
 }
