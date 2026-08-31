@@ -62,6 +62,8 @@ let switch2State = "SELESAI";
 
 let measurementActive = false;
 
+let measurementStartTime = 0;
+let measurementClock = null;
 
 // Waktu pengukuran berjalan
 
@@ -925,7 +927,8 @@ function startMeasurement() {
 // =====================================================
 
 measurementActive = true;
-
+measurementStartTime = Date.now();
+    
 const measurementPanel =
     document.getElementById(
         "measurementPanel"
@@ -1194,162 +1197,81 @@ function updateSensorDisplay(
 
 function updateMeasurementClock() {
 
-    if (
-        !measurementActive ||
-        !measurementStartTime
-    ) {
+    if (!measurementActive) {
         return;
     }
 
+    const now = Date.now();
 
-    const elapsedSeconds =
-        Math.floor(
-            (
-                Date.now() -
-                measurementStartTime
-            ) / 1000
-        );
+    const elapsedSeconds = Math.floor(
+        (now - measurementStartTime) / 1000
+    );
 
+    const maxSeconds = 5 * 60 + 30; // 05:30
 
-    const safeElapsed =
-        Math.min(
-            elapsedSeconds,
-            MEASUREMENT_TOTAL_SECONDS
-        );
+    const safeElapsedSeconds = Math.min(
+        elapsedSeconds,
+        maxSeconds
+    );
 
-
-    const minutes =
-        Math.floor(
-            safeElapsed / 60
-        );
-
+    const minutes = Math.floor(
+        safeElapsedSeconds / 60
+    );
 
     const seconds =
-        safeElapsed % 60;
+        safeElapsedSeconds % 60;
 
-
-    // =====================================================
-    // TIMER
-    // =====================================================
+    const timeText =
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0");
 
     const timer =
         document.getElementById(
             "measurementTimer"
         );
 
-
-    if (timer) {
-
-        timer.textContent =
-            String(minutes).padStart(2, "0") +
-            ":" +
-            String(seconds).padStart(2, "0");
-    }
-
-
-    // =====================================================
-// PROGRESS BERDASARKAN WAKTU
-// 00:00 → 05:30
-// =====================================================
-
-const progressBar =
-    document.getElementById(
-        "measurementProgressBar"
-    );
-
-const progressText =
-    document.getElementById(
-        "measurementProgressText"
-    );
-
-const percentage =
-    Math.min(
-        (
-            safeElapsed /
-            MEASUREMENT_TOTAL_SECONDS
-        ) * 100,
-        100
-    );
-
-if (progressBar) {
-
-    progressBar.style.width =
-        `${percentage}%`;
-}
-
-if (progressText) {
-
-    progressText.textContent =
-        `${String(minutes).padStart(2, "0")}:` +
-        `${String(seconds).padStart(2, "0")} / 05:30`;
-}
-
-
-    // =====================================================
-    // DETAIL
-    // =====================================================
-
-    const detail =
+    const progressBar =
         document.getElementById(
-            "measurementDetail"
+            "measurementProgressBar"
         );
-
-
-    if (detail) {
-
-        if (measurementMinute === 0) {
-
-            detail.textContent =
-                "Menunggu data pengukuran pertama...";
-
-        } else if (measurementMinute < 10) {
-
-            detail.textContent =
-                `Data ${measurementMinute}/10 sudah diterima. ` +
-                `Menunggu data berikutnya...`;
-
-        } else {
-
-            detail.textContent =
-                "Semua 10 data pengukuran sudah diterima.";
-        }
-    }
-
-
-    // =====================================================
-    // PROGRESS TEXT
-    // =====================================================
 
     const progressText =
-    document.getElementById(
-        "measurementProgressText"
-    );
-
-if (progressText) {
-
-    let displaySeconds =
-        Math.min(
-            finalElapsedSeconds,
-            MEASUREMENT_TOTAL_SECONDS
+        document.getElementById(
+            "measurementProgressText"
         );
 
-    if (reason === "TIMEOUT") {
-
-        displaySeconds =
-            MEASUREMENT_TOTAL_SECONDS;
+    if (timer) {
+        timer.textContent = timeText;
     }
 
-    const minutes =
-        Math.floor(
-            displaySeconds / 60
+    if (progressBar) {
+
+        const percentage =
+            (safeElapsedSeconds / maxSeconds) * 100;
+
+        progressBar.style.width =
+            percentage + "%";
+    }
+
+    if (progressText) {
+
+        progressText.textContent =
+            timeText + " / 05:30";
+    }
+
+    if (elapsedSeconds >= maxSeconds) {
+
+        finishMeasurement("TIMEOUT");
+
+        return;
+    }
+
+    measurementClock =
+        setTimeout(
+            updateMeasurementClock,
+            1000
         );
-
-    const seconds =
-        displaySeconds % 60;
-
-    progressText.textContent =
-        `${String(minutes).padStart(2, "0")}:` +
-        `${String(seconds).padStart(2, "0")} / 05:30`;
 }
     
 // =========================================================
@@ -1478,6 +1400,9 @@ function finishMeasurement(reason) {
     // =====================================================
 
     measurementActive = false;
+   
+    clearTimeout(measurementClock);
+measurementClock = null;
 
 const measurementPanel =
     document.getElementById(
