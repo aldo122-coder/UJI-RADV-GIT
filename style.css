@@ -445,7 +445,7 @@ h1 {
     display: grid;
 
     grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+        repeat(2, minmax(0, 1fr));
 
     gap: 12px;
 
@@ -538,15 +538,6 @@ h1 {
 
 #measurementStatus {
     color: #f59e0b;
-}
-
-
-/* =========================================================
-   DATA
-========================================================= */
-
-#measurementProgress {
-    color: #22c55e;
 }
 
 
@@ -2104,7 +2095,17 @@ body.pin-locked {
 }
 
 .measurement-progress-text {
-    display: none !important;
+    margin-top: 8px;
+
+    text-align: right;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+    letter-spacing: 0.3px;
 }
 
 .measurement-detail,
