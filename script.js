@@ -1091,20 +1091,6 @@ function handleMeasurementData(
     );
 }
 
-    // =====================================================
-    // DATA 10/10
-    // =====================================================
-
-    if (
-        minute >= 10
-    ) {
-
-        finishMeasurement(
-            "COMPLETE"
-        );
-    }
-}
-
 
 // =========================================================
 // UPDATE SENSOR
@@ -1365,6 +1351,7 @@ if (progressText) {
         `${String(minutes).padStart(2, "0")}:` +
         `${String(seconds).padStart(2, "0")} / 05:30`;
 }
+    
 // =========================================================
 // UPDATE TAMPILAN PROGRESS PENGUKURAN
 // =========================================================
@@ -1596,50 +1583,6 @@ if (progressBar) {
     progressBar.style.width =
         `${finalPercentage}%`;
 }
-
-
-// =====================================================
-// TEKS PROGRESS
-// =====================================================
-
-const progressText =
-    document.getElementById(
-        "measurementProgressText"
-    );
-
-if (progressText) {
-
-    let displaySeconds =
-        Math.min(
-            finalElapsedSeconds,
-            MEASUREMENT_TOTAL_SECONDS
-        );
-
-    if (reason === "TIMEOUT") {
-
-        displaySeconds =
-            MEASUREMENT_TOTAL_SECONDS;
-    }
-
-    const minutes =
-        Math.floor(
-            displaySeconds / 60
-        );
-
-    const seconds =
-        displaySeconds % 60;
-
-    progressText.textContent =
-        `${String(minutes).padStart(2, "0")}:` +
-        `${String(seconds).padStart(2, "0")} / 05:30`;
-}
-
-
-console.log(
-    "RAD-V: Pengukuran selesai:",
-    reason
-);
-
 
 // =========================================================
 // KONTROL RC
