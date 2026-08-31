@@ -1059,21 +1059,6 @@ function handleMeasurementData(message) {
 }
 
 
-    // =====================================================
-    // DATA 10/10
-    // =====================================================
-
-    if (
-        minute >= 10
-    ) {
-
-        finishMeasurement(
-            "COMPLETE"
-        );
-    }
-}
-
-
 // =========================================================
 // UPDATE SENSOR
 // =========================================================
@@ -1230,7 +1215,7 @@ function updateMeasurementClock() {
 
 
     // =====================================================
-    // PROGRESS BERDASARKAN DATA
+    // PROGRESS BAR BERDASARKAN WAKTU
     // =====================================================
 
     const progressBar =
@@ -1243,9 +1228,12 @@ function updateMeasurementClock() {
 
         const percentage =
             Math.min(
-            (safeElapsed / MEASUREMENT_TOTAL_SECONDS) * 100,
-            100
-        );
+                (
+                    safeElapsed /
+                    MEASUREMENT_TOTAL_SECONDS
+                ) * 100,
+                100
+            );
 
         progressBar.style.width =
             `${percentage}%`;
@@ -1264,27 +1252,13 @@ function updateMeasurementClock() {
 
     if (detail) {
 
-        if (measurementMinute === 0) {
-
-            detail.textContent =
-                "Menunggu data pengukuran pertama...";
-
-        } else if (measurementMinute < 10) {
-
-            detail.textContent =
-                `Data ${measurementMinute}/10 sudah diterima. ` +
-                `Menunggu data berikutnya...`;
-
-        } else {
-
-            detail.textContent =
-                "Semua 10 data pengukuran sudah diterima.";
-        }
+        detail.textContent =
+            "Pengukuran berlangsung selama 05:30.";
     }
 
 
     // =====================================================
-    // PROGRESS TEXT
+    // TEXT PROGRESS
     // =====================================================
 
     const progressText =
@@ -1296,7 +1270,7 @@ function updateMeasurementClock() {
     if (progressText) {
 
         progressText.textContent =
-    `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")} / 05:30`;
+            `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")} / 05:30`;
     }
 }
 
@@ -1479,44 +1453,63 @@ if (measurementPanel) {
 
 
     // =====================================================
-    // PROGRESS TERAKHIR
-    // =====================================================
+// PROGRESS TERAKHIR
+// =====================================================
 
-    const progressBar =
-        document.getElementById(
-            "measurementProgressBar"
-        );
-
-
-    if (progressBar) {
-
-        progressBar.style.width =
-            `${Math.min(
-                (measurementMinute / 10) * 100,
-                100
-            )}%`;
-    }
-
-
-    const progressText =
-        document.getElementById(
-            "measurementProgressText"
-        );
-
-
-    if (progressText) {
-
-        progressText.textContent =
-            `DATA ${measurementMinute} / 10`;
-    }
-
-
-    console.log(
-        "RAD-V: Pengukuran selesai:",
-        reason,
-        `${measurementMinute}/10`
+const progressBar =
+    document.getElementById(
+        "measurementProgressBar"
     );
+
+if (progressBar) {
+
+    const finalProgress =
+        reason === "TIMEOUT"
+            ? 100
+            : Math.min(
+                (
+                    finalElapsedSeconds /
+                    MEASUREMENT_TOTAL_SECONDS
+                ) * 100,
+                100
+            );
+
+    progressBar.style.width =
+        `${finalProgress}%`;
 }
+
+
+const progressText =
+    document.getElementById(
+        "measurementProgressText"
+    );
+
+
+if (progressText) {
+
+    const safeElapsed =
+        Math.min(
+            finalElapsedSeconds,
+            MEASUREMENT_TOTAL_SECONDS
+        );
+
+    const minutes =
+        Math.floor(
+            safeElapsed / 60
+        );
+
+    const seconds =
+        safeElapsed % 60;
+
+    progressText.textContent =
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")} / 05:30`;
+}
+
+
+console.log(
+    "RAD-V: Pengukuran selesai:",
+    reason
+);
 
 
 // =========================================================
@@ -2107,125 +2100,6 @@ document.addEventListener(
     }
 );
 
-// =========================================================
-// HITUNG JUMLAH DATA PADA TABEL
-// =========================================================
-
-function getRadiationTableDataCount() {
-
-    const tbody =
-        document.querySelector(
-            "#radiationTable tbody"
-        );
-
-    if (!tbody) {
-        return 0;
-    }
-
-    const rows =
-        tbody.querySelectorAll("tr");
-
-    let count = 0;
-
-    rows.forEach(row => {
-
-        // Abaikan baris kosong
-        if (
-            row.classList.contains("table-empty")
-        ) {
-            return;
-        }
-
-        const cells =
-            row.querySelectorAll("td");
-
-        if (cells.length === 0) {
-            return;
-        }
-
-        count++;
-    });
-
-    return count;
-}
-
-
-// =========================================================
-// MONITOR DATA BARU PADA TABEL
-// =========================================================
-
-function checkMeasurementTableProgress() {
-
-    if (!measurementActive) {
-        return;
-    }
-
-    const currentCount =
-        getRadiationTableDataCount();
-
-
-    const newDataCount =
-        currentCount -
-        measurementInitialTableCount;
-
-
-    const newProgress =
-        Math.max(
-            0,
-            Math.min(
-                newDataCount,
-                10
-            )
-        );
-
-
-    if (
-        newProgress !== measurementMinute
-    ) {
-
-        measurementMinute =
-            newProgress;
-
-
-        console.log(
-            "RAD-V TABLE PROGRESS:",
-            {
-                awal:
-                    measurementInitialTableCount,
-
-                sekarang:
-                    currentCount,
-
-                baru:
-                    newDataCount,
-
-                progress:
-                    `${measurementMinute}/10`
-            }
-        );
-
-
-        updateMeasurementDisplay();
-    }
-
-
-    // 10 DATA SUDAH MASUK
-    if (
-        measurementMinute >= 10
-    ) {
-
-        clearInterval(
-            measurementTableWatcher
-        );
-
-        measurementTableWatcher =
-            null;
-
-        finishMeasurement(
-            "COMPLETE"
-        );
-    }
-}
 
 
 // =========================================================
