@@ -306,6 +306,84 @@
 </div>
 
 
+<!-- =====================================================
+     KONTROL RC
+===================================================== -->
+
+<div class="direction-control">
+
+    <!-- RTB -->
+    <button
+        class="rtb-button"
+        onclick="sendRTB()">
+        RTB
+    </button>
+
+
+    <div class="rc-main">
+
+        <!-- KIRI + KANAN -->
+        <div class="side-control">
+
+            <button
+                class="control-button kiri"
+                onpointerdown="pressControl('KIRI', event)"
+                onpointerup="releaseControl(event)"
+                onpointercancel="releaseControl(event)">
+
+                <span class="arrow">◀</span>
+                <span>KIRI</span>
+
+            </button>
+
+
+            <button
+                class="control-button kanan"
+                onpointerdown="pressControl('KANAN', event)"
+                onpointerup="releaseControl(event)"
+                onpointercancel="releaseControl(event)">
+
+                <span class="arrow">▶</span>
+                <span>KANAN</span>
+
+            </button>
+
+        </div>
+
+
+        <!-- MAJU + MUNDUR -->
+        <div class="forward-control">
+
+            <button
+                class="control-button maju"
+                onpointerdown="pressControl('MAJU', event)"
+                onpointerup="releaseControl(event)"
+                onpointercancel="releaseControl(event)">
+
+                <span class="arrow">▲</span>
+                <span>MAJU</span>
+
+            </button>
+
+
+            <button
+                class="control-button mundur"
+                onpointerdown="pressControl('MUNDUR', event)"
+                onpointerup="releaseControl(event)"
+                onpointercancel="releaseControl(event)">
+
+                <span class="arrow">▼</span>
+                <span>MUNDUR</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 </div> <!-- #controlTab -->
 
 
