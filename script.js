@@ -2188,3 +2188,94 @@ document.addEventListener(
         }
     }
 );
+
+/* =========================================================
+   TAB KONTROL / PEMETAAN
+========================================================= */
+
+function openTab(tabId) {
+
+    const controlTab =
+        document.getElementById("controlTab");
+
+    const mappingTab =
+        document.getElementById("mappingTab");
+
+    const controlButton =
+        document.getElementById("tabControlButton");
+
+    const mappingButton =
+        document.getElementById("tabMappingButton");
+
+
+    /* -----------------------------------------
+       SEMBUNYIKAN SEMUA TAB
+    ----------------------------------------- */
+
+    if (controlTab) {
+        controlTab.classList.remove("active");
+    }
+
+    if (mappingTab) {
+        mappingTab.classList.remove("active");
+    }
+
+
+    /* -----------------------------------------
+       MATIKAN STATUS BUTTON
+    ----------------------------------------- */
+
+    if (controlButton) {
+        controlButton.classList.remove("active");
+    }
+
+    if (mappingButton) {
+        mappingButton.classList.remove("active");
+    }
+
+
+    /* -----------------------------------------
+       BUKA TAB YANG DIPILIH
+    ----------------------------------------- */
+
+    if (tabId === "controlTab") {
+
+        if (controlTab) {
+            controlTab.classList.add("active");
+        }
+
+        if (controlButton) {
+            controlButton.classList.add("active");
+        }
+
+    }
+
+
+    if (tabId === "mappingTab") {
+
+        if (mappingTab) {
+            mappingTab.classList.add("active");
+        }
+
+        if (mappingButton) {
+            mappingButton.classList.add("active");
+        }
+
+
+        /* -----------------------------------------
+           PERBAIKI UKURAN LEAFLET
+        ----------------------------------------- */
+
+        setTimeout(() => {
+
+            if (typeof radMap !== "undefined" && radMap) {
+
+                radMap.invalidateSize();
+
+            }
+
+        }, 150);
+
+    }
+
+}
