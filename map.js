@@ -1686,9 +1686,5 @@ const isLatest =
 
 /* =========================================================
    START
+   PETA AKAN DIINISIALISASI SAAT TAB PEMETAAN DIBUKA
 ========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    initRadiationMap
-);
