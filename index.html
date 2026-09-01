@@ -105,6 +105,35 @@
     </div>
 
 
+    <!-- =====================================================
+         NAVIGASI TAB
+    ====================================================== -->
+
+    <div class="tab-navigation">
+
+        <button
+            type="button"
+            class="tab-button active"
+            id="tabControlButton"
+            onclick="openTab('controlTab')"
+        >
+            🎮 KONTROL
+        </button>
+
+        <button
+            type="button"
+            class="tab-button"
+            id="tabMappingButton"
+            onclick="openTab('mappingTab')"
+        >
+            🗺️ PEMETAAN
+        </button>
+
+    </div>
+        
+
+<div id="controlTab" class="tab-content active">
+        
    <!-- =====================================================
      CONTROL RAD-V
 ===================================================== -->
@@ -352,8 +381,7 @@
 </div>
 
 
-
-
+<div id="mappingTab" class="tab-content">
 
     <!-- PEMETAAN GPS -->
     <div class="map-section">
