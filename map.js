@@ -966,20 +966,30 @@ renderSpreadsheetTable(
 );
 
 
-        /* -----------------------------------------
-           TIDAK ADA GPS
-        ----------------------------------------- */
+/* -----------------------------------------
+   TIDAK ADA GPS
+----------------------------------------- */
 
-        if (points.length === 0) {
+if (points.length === 0) {
 
-            if (mapInfo) {
+    if (mapInfo) {
 
-                mapInfo.textContent =
-                    "Belum ada koordinat GPS yang valid.";
-            }
+        mapInfo.textContent =
+            "Belum ada koordinat GPS yang valid.";
 
-            return;
-        }
+    }
+
+    return;
+}
+
+
+/* -----------------------------------------
+   MAP BELUM DIBUKA
+----------------------------------------- */
+
+if (!radMap) {
+    return;
+}
 
 
 /* -----------------------------------------
@@ -989,7 +999,6 @@ renderSpreadsheetTable(
 if (pointLayer) {
     pointLayer.clearLayers();
 }
-
 
 /* -----------------------------------------
    HAPUS SEMUA GARIS LAMA
