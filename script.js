@@ -2208,9 +2208,9 @@ function openTab(tabId) {
         document.getElementById("tabMappingButton");
 
 
-    /* -----------------------------------------
+    /* =====================================================
        SEMBUNYIKAN SEMUA TAB
-    ----------------------------------------- */
+    ===================================================== */
 
     if (controlTab) {
         controlTab.classList.remove("active");
@@ -2221,9 +2221,9 @@ function openTab(tabId) {
     }
 
 
-    /* -----------------------------------------
-       MATIKAN STATUS BUTTON
-    ----------------------------------------- */
+    /* =====================================================
+       RESET BUTTON TAB
+    ===================================================== */
 
     if (controlButton) {
         controlButton.classList.remove("active");
@@ -2234,9 +2234,9 @@ function openTab(tabId) {
     }
 
 
-    /* -----------------------------------------
-       BUKA TAB YANG DIPILIH
-    ----------------------------------------- */
+    /* =====================================================
+       TAB KONTROL
+    ===================================================== */
 
     if (tabId === "controlTab") {
 
@@ -2248,8 +2248,13 @@ function openTab(tabId) {
             controlButton.classList.add("active");
         }
 
+        return;
     }
 
+
+    /* =====================================================
+       TAB PEMETAAN
+    ===================================================== */
 
     if (tabId === "mappingTab") {
 
@@ -2262,19 +2267,49 @@ function openTab(tabId) {
         }
 
 
-        /* -----------------------------------------
-           PERBAIKI UKURAN LEAFLET
-        ----------------------------------------- */
+        /* ---------------------------------------------
+           TUNGGU TAB BENAR-BENAR TERBUKA
+        --------------------------------------------- */
 
-        setTimeout(() => {
+        setTimeout(function () {
 
-            if (typeof radMap !== "undefined" && radMap) {
+            /* -----------------------------------------
+               JIKA PETA BELUM DIBUAT
+            ----------------------------------------- */
 
-                radMap.invalidateSize();
+            if (
+                typeof radMap !== "undefined" &&
+                radMap === null
+            ) {
+
+                if (
+                    typeof initRadiationMap ===
+                    "function"
+                ) {
+
+                    initRadiationMap();
+
+                }
 
             }
 
-        }, 150);
+
+            /* -----------------------------------------
+               JIKA PETA SUDAH ADA
+            ----------------------------------------- */
+
+            else if (
+                typeof radMap !== "undefined" &&
+                radMap
+            ) {
+
+                radMap.invalidateSize();
+
+                loadRadiationMap();
+
+            }
+
+        }, 100);
 
     }
 
