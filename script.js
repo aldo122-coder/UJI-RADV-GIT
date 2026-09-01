@@ -1318,7 +1318,7 @@ function updateMeasurementDisplay() {
 
         if (description) {
             description.textContent =
-                "Aktifkan SENSOR untuk memulai pengukuran.";
+                "Aktifkan saklar PENGUKURAN untuk memulai pengukuran.";
         }
 
         if (dataInfo) {
