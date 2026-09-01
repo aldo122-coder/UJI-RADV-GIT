@@ -306,141 +306,122 @@
 </div>
 
 
-    <!-- KONTROL RC -->
-<div class="direction-control">
-
-    <!-- RTB -->
-    <button
-        class="rtb-button"
-        onclick="sendRTB()">
-        RTB
-    </button>
-
-
-    <div class="rc-main">
-
-        <!-- KIRI + KANAN -->
-        <div class="side-control">
-
-            <button
-                class="control-button kiri"
-                onpointerdown="pressControl('KIRI', event)"
-                onpointerup="releaseControl(event)"
-                onpointercancel="releaseControl(event)">
-
-                <span class="arrow">◀</span>
-                <span>KIRI</span>
-
-            </button>
-
-
-            <button
-                class="control-button kanan"
-                onpointerdown="pressControl('KANAN', event)"
-                onpointerup="releaseControl(event)"
-                onpointercancel="releaseControl(event)">
-
-                <span class="arrow">▶</span>
-                <span>KANAN</span>
-
-            </button>
-
-        </div>
-
-
-        <!-- MAJU + MUNDUR -->
-        <div class="forward-control">
-
-            <button
-                class="control-button maju"
-                onpointerdown="pressControl('MAJU', event)"
-                onpointerup="releaseControl(event)"
-                onpointercancel="releaseControl(event)">
-
-                <span class="arrow">▲</span>
-                <span>MAJU</span>
-
-            </button>
-
-
-            <button
-                class="control-button mundur"
-                onpointerdown="pressControl('MUNDUR', event)"
-                onpointerup="releaseControl(event)"
-                onpointercancel="releaseControl(event)">
-
-                <span class="arrow">▼</span>
-                <span>MUNDUR</span>
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
+</div> <!-- #controlTab -->
 
 
 <div id="mappingTab" class="tab-content">
 
     <!-- PEMETAAN GPS -->
     <div class="map-section">
+
         <div class="map-header">
+
             <div>
                 <h2>PEMETAAN RAD-V</h2>
-                <p id="mapInfo">Menunggu data koordinat dari Google Spreadsheet...</p>
+
+                <p id="mapInfo">
+                    Menunggu data koordinat dari Google Spreadsheet...
+                </p>
             </div>
-            <button class="map-refresh" onclick="loadRadiationMap()">↻ REFRESH</button>
+
+            <button
+                class="map-refresh"
+                onclick="loadRadiationMap()"
+            >
+                ↻ REFRESH
+            </button>
+
         </div>
+
 
         <div id="radMap"></div>
 
+
         <div class="map-legend">
-            <span><i class="legend-dot safe"></i> Rendah</span>
-            <span><i class="legend-dot medium"></i> Sedang</span>
-            <span><i class="legend-dot high"></i> Tinggi</span>
-            <span><i class="legend-dot latest"></i> Posisi Terbaru</span>
+            <span>
+                <i class="legend-dot safe"></i>
+                Rendah
+            </span>
+
+            <span>
+                <i class="legend-dot medium"></i>
+                Sedang
+            </span>
+
+            <span>
+                <i class="legend-dot high"></i>
+                Tinggi
+            </span>
+
+            <span>
+                <i class="legend-dot latest"></i>
+                Posisi Terbaru
+            </span>
         </div>
+
     </div>
 
 
     <!-- TABEL DATA SPREADSHEET -->
-    <div class="table-section">
-        <div class="table-header">
-    <div>
-        <h2>DATA SPREADSHEET RAD-V</h2>
-        <p id="tableInfo">Menunggu data dari Google Spreadsheet...</p>
-    </div>
 
-    <button
-        class="map-refresh table-refresh"
-        onclick="loadRadiationMap()">
-        ↻ REFRESH
-    </button>
-</div>
+    <div class="table-section">
+
+        <div class="table-header">
+
+            <div>
+
+                <h2>
+                    DATA SPREADSHEET RAD-V
+                </h2>
+
+                <p id="tableInfo">
+                    Menunggu data dari Google Spreadsheet...
+                </p>
+
+            </div>
+
+            <button
+                class="map-refresh table-refresh"
+                onclick="loadRadiationMap()"
+            >
+                ↻ REFRESH
+            </button>
+
+        </div>
+
 
         <div class="table-wrapper">
+
             <table id="radiationTable">
+
                 <thead id="radiationTableHead"></thead>
+
                 <tbody id="radiationTableBody"></tbody>
+
             </table>
+
         </div>
+
     </div>
+
 
     <!-- LINK -->
+
     <div class="link-section">
 
-    <h2>DATA</h2>
+        <h2>DATA</h2>
 
-    <button
-        class="link-button spreadsheet"
-        onclick="window.open(
-            'https://docs.google.com/spreadsheets/d/1xLhZmmkAYq8_xfaccntf8GUCx0XZZ8y9Rn7KZ0Ob_2U/edit?gid=0#gid=0'
-        )">
-        📊 SPREADSHEET
-    </button>
+        <button
+            class="link-button spreadsheet"
+            onclick="window.open(
+                'https://docs.google.com/spreadsheets/d/1xLhZmmkAYq8_xfaccntf8GUCx0XZZ8y9Rn7KZ0Ob_2U/edit?gid=0#gid=0'
+            )"
+        >
+            📊 SPREADSHEET
+        </button>
 
     </div>
+
 
     <footer>
         RC Monitoring & Control
