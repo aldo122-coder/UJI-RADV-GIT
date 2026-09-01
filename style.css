@@ -315,6 +315,23 @@ h1 {
     color: #e5e7eb;
 }
 
+/* =========================================================
+   JUDUL SAKLAR
+========================================================= */
+
+.switch-title {
+    margin-bottom: 12px;
+
+    color: #aeb8c8;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    line-height: 1.2;
+
+    text-align: center;
+}
 
 /* =========================================================
    SWITCH DISABLED
@@ -1756,6 +1773,10 @@ body.pin-locked {
         font-weight: 500;
     }
 
+   .switch-title {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
 
     /* -----------------------------------------------------
        MEASUREMENT PANEL
@@ -2003,7 +2024,11 @@ body.pin-locked {
         font-size: 14px;
     }
 
-
+   .switch-title {
+        font-size: 13px;
+        margin-bottom: 9px;
+    }
+   
    /* -----------------------------------------------------
    MEASUREMENT
 ----------------------------------------------------- */
